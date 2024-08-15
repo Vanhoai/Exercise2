@@ -30,7 +30,7 @@ class Utils {
             val apps = mutableListOf<AppInfo>()
             usageStats.forEach { app ->
                 try {
-                    // Lấy icon của ứng dụng
+//                    val label = context.packageManager.getApplicationLabel(app.).toString()
                     val icon = context.packageManager.getApplicationIcon(app.packageName)
                     apps.add(AppInfo(app.packageName, app.packageName, icon))
                 } catch (e: PackageManager.NameNotFoundException) {
