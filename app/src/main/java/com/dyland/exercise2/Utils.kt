@@ -1,6 +1,6 @@
 package com.dyland.exercise2
 
-import android.app.ActivityManager
+import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.pm.PackageManager
 import com.dyland.exercise2.models.AppInfo
@@ -19,21 +19,26 @@ class Utils {
         }
 
         fun getRecentApps(context: Context): List<AppInfo> {
-            val recentTasks = (context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).appTasks
-            val recentApps = mutableListOf<AppInfo>()
-            for (task in recentTasks) {
-                val packageName = task.taskInfo.baseIntent.component?.packageName ?: continue
+            val usageStatsManager =
+                context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+            val usageStats = usageStatsManager.queryUsageStats(
+                UsageStatsManager.INTERVAL_DAILY,
+                System.currentTimeMillis() - 1000 * 60 * 60 * 24,
+                System.currentTimeMillis()
+            )
+
+            val apps = mutableListOf<AppInfo>()
+            usageStats.forEach { app ->
                 try {
-                    val label = context.packageManager.getApplicationLabel(
-                        context.packageManager.getApplicationInfo(packageName, 0)
-                    ).toString()
-                    val icon = context.packageManager.getApplicationIcon(packageName)
-                    recentApps.add(AppInfo(label, packageName, icon))
-                } catch (e: Exception) {
+                    // Lấy icon của ứng dụng
+                    val icon = context.packageManager.getApplicationIcon(app.packageName)
+                    apps.add(AppInfo(app.packageName, app.packageName, icon))
+                } catch (e: PackageManager.NameNotFoundException) {
+                    // Ứng dụng có thể đã bị gỡ cài đặt, bỏ qua ứng dụng này
                     e.printStackTrace()
                 }
             }
-            return recentApps
+            return apps
         }
     }
 }

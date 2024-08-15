@@ -16,6 +16,7 @@ fun MainNavigation(
     mainUIState: MainUIState,
     onEvent: (MainUIEvents) -> Unit,
 ) {
+
     val navController = rememberNavController()
 
     NavHost(
