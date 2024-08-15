@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,6 +29,8 @@ class MainActivity : ComponentActivity() {
             this,
             Manifest.permission.PACKAGE_USAGE_STATS
         ) == PackageManager.PERMISSION_GRANTED
+
+        // FIX ME !! (after allow permission, restart app then app again go to setting)
         if (!hasPermission) {
             val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
             this.startActivity(intent)
@@ -39,7 +40,7 @@ class MainActivity : ComponentActivity() {
             Exercise2Theme {
                 val mainViewModel = hiltViewModel<MainViewModel>()
                 val mainUIState = mainViewModel.mainUiState.collectAsState().value
-                
+
                 LaunchedEffect(Unit) {
                     mainViewModel.initialize(applicationContext)
                 }
